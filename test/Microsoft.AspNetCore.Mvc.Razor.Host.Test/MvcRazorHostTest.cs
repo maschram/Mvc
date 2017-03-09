@@ -12,10 +12,6 @@ using System.Reflection;
 using System.Text;
 #endif
 using Microsoft.AspNetCore.Mvc.Razor.Internal;
-using Microsoft.AspNetCore.Razor;
-using Microsoft.AspNetCore.Razor.Chunks.Generators;
-using Microsoft.AspNetCore.Razor.CodeGenerators;
-using Microsoft.AspNetCore.Razor.Parser;
 using Microsoft.AspNetCore.Razor.Runtime.TagHelpers;
 using Microsoft.AspNetCore.Testing;
 using Xunit;
