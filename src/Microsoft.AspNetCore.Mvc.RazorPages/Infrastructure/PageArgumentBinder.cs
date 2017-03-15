@@ -3,6 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
@@ -15,28 +16,30 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Infrastructure
             return result.IsModelSet ? result.Model : @default;
         }
 
-        public Task<T> BindModelAsync<T>(PageContext context, string name)
+        public Task<TModel> BindModelAsync<TModel>(PageContext context, string name)
         {
-            return BindModelAsync<T>(context, default(T), name);
+            return BindModelAsync(context, default(TModel), name);
         }
 
-        public async Task<T> BindModelAsync<T>(PageContext context, T @default, string name)
+        public async Task<TModel> BindModelAsync<TModel>(PageContext context, TModel @default, string name)
         {
-            var result = await BindAsync(context, null, name, typeof(T));
-            return result.IsModelSet ? (T)result.Model : @default;
+            var result = await BindAsync(context, null, name, typeof(TModel));
+            return result.IsModelSet ? (TModel)result.Model : @default;
         }
 
-        public async Task<bool> TryUpdateModelAsync<T>(PageContext context, T value)
+        public async Task<bool> TryUpdateModelAsync<TModel>(PageContext context, TModel value)
         {
-            var result = await BindAsync(context, value, string.Empty, typeof(T));
+            var result = await BindAsync(context, value, string.Empty, typeof(TModel));
             return result.IsModelSet && context.ModelState.IsValid;
         }
 
-        public async Task<bool> TryUpdateModelAsync<T>(PageContext context, T value, string name)
+        public async Task<bool> TryUpdateModelAsync<TModel>(PageContext context, TModel value, string name)
         {
-            var result = await BindAsync(context, value, name, typeof(T));
+            var result = await BindAsync(context, value, name, typeof(TModel));
             return result.IsModelSet && context.ModelState.IsValid;
         }
+
+        public abstract Task<ModelBindingResult> BindAsync(PageContext context, ParameterDescriptor descriptor);
 
         protected abstract Task<ModelBindingResult> BindAsync(PageContext context, object value, string name, Type type);
     }

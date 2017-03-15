@@ -170,16 +170,17 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
 
             var pageFactory = _pageFactoryProvider.CreatePageFactory(compiledActionDescriptor);
             var pageDisposer = _pageFactoryProvider.CreatePageDisposer(compiledActionDescriptor);
+            var propertyBinder = PagePropertyBinderFactory.GetModelBinderFactory(_modelMetadataProvider, compiledActionDescriptor);
 
             Func<PageContext, object> modelFactory = null;
             Action<PageContext, object> modelReleaser = null;
             if (compiledActionDescriptor.ModelTypeInfo == null)
             {
-                PopulateHandlerMethodDescriptors(compiledActionDescriptor.PageTypeInfo, compiledActionDescriptor);
+                PopulateHandlerMethodDescriptors(_modelMetadataProvider, compiledActionDescriptor.PageTypeInfo, compiledActionDescriptor);
             }
             else
             {
-                PopulateHandlerMethodDescriptors(compiledActionDescriptor.ModelTypeInfo, compiledActionDescriptor);
+                PopulateHandlerMethodDescriptors(_modelMetadataProvider, compiledActionDescriptor.ModelTypeInfo, compiledActionDescriptor);
 
                 modelFactory = _modelFactoryProvider.CreateModelFactory(compiledActionDescriptor);
                 modelReleaser = _modelFactoryProvider.CreateModelDisposer(compiledActionDescriptor);
@@ -193,6 +194,7 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
                 pageDisposer,
                 modelFactory,
                 modelReleaser,
+                propertyBinder,
                 pageStartFactories,
                 cachedFilters);
         }
@@ -218,7 +220,10 @@ namespace Microsoft.AspNetCore.Mvc.RazorPages.Internal
         }
 
         // Internal for testing.
-        internal static void PopulateHandlerMethodDescriptors(TypeInfo type, CompiledPageActionDescriptor actionDescriptor)
+        internal static void PopulateHandlerMethodDescriptors(
+            IModelMetadataProvider modelMetadataProvider,
+            TypeInfo type, 
+            CompiledPageActionDescriptor actionDescriptor)
         {
             var methods = type.GetMethods();
             for (var i = 0; i < methods.Length; i++)

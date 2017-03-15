@@ -195,6 +195,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new DefaultObjectValidator(metadataProvider, options.ModelValidatorProviders);
             });
             services.TryAddSingleton<ClientValidatorCache>();
+            services.TryAddSingleton<ParameterBinder>();
 
             //
             // Random Infrastructure
