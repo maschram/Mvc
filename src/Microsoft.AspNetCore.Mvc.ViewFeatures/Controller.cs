@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Microsoft.AspNetCore.Mvc
 {
@@ -285,7 +286,10 @@ namespace Microsoft.AspNetCore.Mvc
         [NonAction]
         public virtual JsonResult Json(object data)
         {
-            return new JsonResult(data);
+            // force Newtonsoft to use the default contract resolver (don't overwrite field names)
+            var serializerSettings = new JsonSerializerSettings();
+            serializerSettings.ContractResolver = new DefaultContractResolver();
+            return new JsonResult(data, serializerSettings);
         }
 
         /// <summary>
